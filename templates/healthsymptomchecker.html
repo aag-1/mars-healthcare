@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Symptom Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            color: #2c3e50;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            background-color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <h2>Health Symptom Checker</h2>
+    <input type="text" id="symptomInput" placeholder="Enter your symptoms">
+    <button onclick="checkSymptom()">Check Health Issue</button>
+
+    <div id="result" class="result"></div>
+
+    <script>
+        const symptomsMap = {
+            "fever": "Possible flu or infection",
+            "cough": "Possible cold or respiratory infection",
+            "headache": "Possible migraine or tension headache",
+            "stomach_pain": "Possible indigestion or gastritis",
+            "fatigue": "Possible anemia or chronic fatigue syndrome",
+            "nausea": "Possible gastrointestinal issue",
+            "short_breath": "Possible asthma or other respiratory conditions"
+        };
+
+        function checkSymptom() {
+            const userInput = document.getElementById("symptomInput").value.toLowerCase();
+            // Replace spaces with underscores in user input
+            const formattedInput = userInput.replace(/\s+/g, '_');
+            
+            const healthIssue = symptomsMap[formattedInput];
+
+            const resultDiv = document.getElementById("result");
+            if (healthIssue) {
+                resultDiv.textContent = `Health Issue: ${healthIssue}`;
+            } else {
+                resultDiv.textContent = "Symptom not recognized. Please try again.";
+            }
+        }
+    </script>
+</body>
+</html>

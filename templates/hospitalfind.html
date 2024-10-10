@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" class="{% if session.get('theme') == 'dark' %}dark{% endif %}">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MARS Healthcare - Find Hospitals Nearby</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <link href="static/style.css" rel="stylesheet" />
+  <style>
+    /* Navigation bar hover effect */
+    nav {
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    nav:hover {
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+    }
+
+    .glow-text {
+      text-shadow: 0 0 10px rgba(59, 130, 246, 0.7),
+        0 0 20px rgba(59, 130, 246, 0.7),
+        0 0 40px rgba(59, 130, 246, 0.8);
+    }
+
+    /* Smooth transitions for menu items */
+    a.nav-link {
+      transition: color 0.3s ease-in-out;
+    }
+
+    a.nav-link:hover {
+      color: #2563eb;
+    }
+
+    /* Additional custom styles */
+    header {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    }
+
+    body.dark-mode {
+      background-color: #1e293b;
+      color: #ffffff;
+    }
+
+    /* Theme toggle button */
+    #themeToggle {
+      transition: background-color 0.3s ease;
+    }
+
+    #themeToggle:hover {
+      background-color: #9ca3af;
+    }
+
+    .content {
+      padding: 100px 20px 20px;
+    }
+
+    .search-section {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .search-section h2 {
+      color: #004d61;
+      margin-bottom: 10px;
+    }
+
+    .search-section input {
+      width: 60%;
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .search-section input:focus {
+      border-color: #008c99;
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 140, 153, 0.7);
+    }
+
+    .search-section button {
+      background-color: #008c99;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .search-section button:hover {
+      background-color: #007a8c;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .loading img {
+      width: 100px;
+    }
+
+    .kanban-board {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .kanban-column {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      width: 30%;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+    }
+
+    .kanban-column:hover {
+      transform: translateY(-5px);
+    }
+
+    .kanban-column h3 {
+      color: #004d61;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .kanban-column a {
+      color: #008c99;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 10px;
+      transition: color 0.3s;
+    }
+
+    .kanban-column a:hover {
+      color: #007a8c;
+    }
+
+    @media (max-width: 768px) {
+      .search-section input {
+        width: 90%;
+      }
+
+      .kanban-column {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <header class="bg-white shadow-md">
+    <nav class="container mx-auto px-4">
+      <div class="flex justify-between">
+        <div class="flex space-x-4">
+          <div>
+            <a href="{{ url_for('home') }}" class="flex items-center py-5 px-2 text-gray-700 hover:text-gray-900">
+              <h1 class="text-4xl glow-text"><b>MARS Healthcare</b></h1>
+            </a>
+          </div>
+          <div class="hidden md:flex items-center space-x-1">
+            <a href="{{ url_for('home') }}" class="py-5 px-3 text-gray-700 hover:text-gray-900 nav-link">Home</a>
+            <a href="{{ url_for('dashboard') }}" class="py-5 px-3 text-gray-700 hover:text-gray-900 nav-link">Doctor login</a>
+            <a href="http://127.0.0.1:5000/hospitalfind" class="py-5 px-3 text-gray-700 hover:text-gray-900 nav-link">Hospital Recommendation System</a>
+          </div>
+        </div>
+        <div class="hidden md:flex items-center space-x-1">
+          {% if session.get('user_id') %}
+          <a href="{{ url_for('logout') }}" class="py-2 px-3 bg-red-400 hover:bg-red-300 text-white rounded transition duration-300">Logout</a>
+          {% else %}
+          <div id="googleSignIn" class="g-signin2" data-onsuccess="onSignIn"></div>
+          {% endif %}
+        </div>
+
+        <div id="themeToggle" class="cursor-pointer"></div>
+
+        <div class="md:hidden flex items-center">
+          <button class="mobile-menu-button">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </button>
+        </div>
+      </div>
+    </nav>
+    <div class="mobile-menu hidden md:hidden">
+      <a href="{{ url_for('home') }}" class="block py-2 px-4 text-sm hover:bg-gray-200">Home</a>
+      <a href="{{ url_for('dashboard') }}" class="block py-2 px-4 text-sm hover:bg-gray-200">Doctor Login</a>
+      {% if session.get('user_id') %}
+      <a href="{{ url_for('logout') }}" class="block py-2 px-4 text-sm hover:bg-gray-200">Logout</a>
+      {% else %}
+      <div id="googleSignInMobile" class="g-signin2" data-onsuccess="onSignIn"></div>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="search-section">
+      <h2>  Enter your health issue </h2>
+      <input type="text" id="healthIssue" placeholder="Type your symptoms or issue here..." />
+      <button onclick="findHospitals()">Find Hospitals</button>
+    </div>
+
+    <div class="loading" id="loading">
+      <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading..." />
+    </div>
+
+    <div class="kanban-board" id="kanbanBoard">
+      <!-- Hospital columns will appear here -->
+    </div>
+  </div>
+
+  <script>
+    function findHospitals() {
+      const healthIssue = document.getElementById('healthIssue').value;
+
+      // Show loading GIF
+      const loading = document.getElementById('loading');
+      loading.style.display = 'block';
+
+      // Simulate a delay of at least 3 seconds before fetching the results
+      setTimeout(() => {
+        if (!navigator.geolocation) {
+          alert("Geolocation is not supported by this browser.");
+          loading.style.display = 'none';
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition((position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          // Build the Google Maps URL based on the user's location and symptom
+          const searchQuery = `Hospitals near me that treat ${healthIssue}`;
+          const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}&ll=${lat},${lng}`;
+
+          // Fetch the hospital data and render it
+          renderHospitals(url);
+          loading.style.display = 'none';
+        }, () => {
+          alert("Unable to retrieve your location.");
+          loading.style.display = 'none';
+        });
+      }, 3000); // 3-second delay
+    }
+
+    function renderHospitals(url) {
+      const kanbanBoard = document.getElementById('kanbanBoard');
+      kanbanBoard.innerHTML = ''; // Clear previous results
+
+      // Create a column for the fetched hospital
+      const column = document.createElement('div');
+      column.className = 'kanban-column';
+
+      const heading = document.createElement('h3');
+      heading.textContent = 'Hospitals Found';
+      column.appendChild(heading);
+
+      const hospitalLink = document.createElement('a');
+      hospitalLink.href = url;
+      hospitalLink.target = '_blank';
+      hospitalLink.textContent = 'Click here to see hospitals';
+      column.appendChild(hospitalLink);
+
+      kanbanBoard.appendChild(column);
+    }
+
+    // Toggle mobile menu visibility
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.querySelector('.mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Toggle theme (dark/light mode)
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+      sessionStorage.setItem('theme', theme);
+    });
+
+    // Load theme from session storage
+    window.onload = () => {
+      const theme = sessionStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+      }
+    };
+  </script>
+</body>
+
+</html>

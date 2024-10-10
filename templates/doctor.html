@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mars Healthcare</title>
+    <style>
+      /* Base styles for the page */
+      body {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f4f8;
+        color: #333;
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      /* Top navigation bar */
+      .navbar {
+        width: 100%;
+        background-color: #006c84;
+        color: white;
+        text-align: center;
+        padding: 15px 0;
+        font-size: 26px;
+        font-weight: bold;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        margin-top: 80px; /* To account for the navbar */
+        width: 230px;
+        height: 100%;
+        background-color: #2a3e50;
+        padding-top: 30px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow-x: hidden;
+        box-shadow: 3px 0 8px rgba(0, 0, 0, 0.1);
+        border-radius: 0 12px 12px 0;
+      }
+
+      /* Sidebar buttons */
+      .sidebar a {
+        padding: 15px 25px;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        display: block;
+        margin-bottom: 15px;
+        background-color: #34495e;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+      }
+
+      .sidebar a:hover {
+        background-color: #00a6c7;
+      }
+
+      /* Content area */
+      .content {
+        margin-left: 260px;
+        padding: 40px;
+        margin-top: 100px;
+        background-color: white;
+        display: flex;
+        justify-content: space-between;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+      }
+
+      .profile-section {
+        width: 60%;
+      }
+
+      .schedule-section {
+        width: 35%;
+        padding: 20px;
+        background-color: #e0f7fa;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .content h1 {
+        font-size: 36px;
+        color: #006c84;
+        margin-bottom: 25px;
+      }
+
+      .content p {
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+      }
+
+      .content p strong {
+        color: #005f73;
+      }
+
+      .profile-picture-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .profile-picture {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-right: 15px;
+        border: 2px solid #006c84;
+        object-fit: cover;
+      }
+
+      /* Schedule styles */
+      .schedule {
+        background-color: #ffffff;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #006c84;
+        border-radius: 6px;
+      }
+
+      .schedule-time {
+        font-weight: bold;
+        color: #006c84;
+      }
+
+      .schedule-description {
+        margin-top: 5px;
+        color: #333;
+      }
+
+      .schedule-actions {
+        margin-top: 10px;
+        text-align: right;
+      }
+
+      button {
+        background-color: #006c84;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #004e5f;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+
+      textarea {
+        resize: none;
+        height: 60px;
+      }
+
+      .footer {
+        background-color: #006c84;
+        color: white;
+        text-align: center;
+        padding: 12px 0;
+        font-size: 14px;
+        box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+          margin-left: 0;
+          padding: 20px;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .navbar {
+          padding: 10px 0;
+          font-size: 22px;
+        }
+
+        .profile-section,
+        .schedule-section {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div class="navbar">MARS Healthcare</div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <a href="http://127.0.0.1:5000/consultation">Consultation</a>
+      <a href="http://127.0.0.1:5000/docinterface">Patient-Doctor Interface</a>
+    </div>
+
+    <!-- Main content area -->
+    <div class="content">
+      <div class="profile-section">
+        <h1>Professional Interface</h1>
+        <div class="profile-picture-container">
+          <img
+            id="profilePicture"
+            class="profile-picture"
+            src="default-profile.png"
+            
+          />
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              onchange="loadProfilePicture(event)"
+            />
+          </div>
+        </div>
+        <p><strong>NAME:</strong> Dr. Shetty</p>
+        <p><strong>SPECIALISATION:</strong> Cardiologist</p>
+        <p><strong>LOCATION OF PRACTICE:</strong> Aster group</p>
+      </div>
+
+      <!-- Schedule Section -->
+      <div class="schedule-section">
+        <h2>Schedule</h2>
+        <form id="scheduleForm" onsubmit="addSchedule(event)">
+          <input
+            type="time"
+            id="scheduleTime"
+            required
+            placeholder="Select time"
+          />
+          <textarea
+            id="scheduleDescription"
+            rows="3"
+            placeholder="Schedule description"
+            required
+          ></textarea>
+          <button type="submit">Add Schedule</button>
+        </form>
+        <div id="schedule-container"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">&copy; 2024 Mars Healthcare. All Rights Reserved.</div>
+
+    <script>
+      let scheduleList = [];
+      let scheduleId = 0;
+
+      function loadProfilePicture(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const output = document.getElementById("profilePicture");
+          output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
+
+      function addSchedule(event) {
+        event.preventDefault();
+        const time = document.getElementById("scheduleTime").value;
+        const description = document.getElementById("scheduleDescription").value;
+
+        if (time && description) {
+          scheduleId++;
+          scheduleList.push({ id: scheduleId, time, description });
+          renderSchedule();
+          document.getElementById("scheduleTime").value = "";
+          document.getElementById("scheduleDescription").value = "";
+        } else {
+          alert("Please fill in both fields.");
+        }
+      }
+
+      function renderSchedule() {
+        const container = document.getElementById("schedule-container");
+        container.innerHTML = ""; // Clear existing schedules
+
+        scheduleList.forEach((schedule) => {
+          const scheduleDiv = document.createElement("div");
+          scheduleDiv.className = "schedule";
+
+          const timeDiv = document.createElement("div");
+          timeDiv.className = "schedule-time";
+          timeDiv.textContent = schedule.time;
+
+          const descriptionDiv = document.createElement("div");
+          descriptionDiv.className = "schedule-description";
+          descriptionDiv.textContent = schedule.description;
+
+          const actionsDiv = document.createElement("div");
+          actionsDiv.className = "schedule-actions";
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.onclick = () => deleteSchedule(schedule.id);
+
+          actionsDiv.appendChild(deleteButton);
+          scheduleDiv.appendChild(timeDiv);
+          scheduleDiv.appendChild(descriptionDiv);
+          scheduleDiv.appendChild(actionsDiv);
+          container.appendChild(scheduleDiv);
+        });
+      }
+
+      function deleteSchedule(id) {
+        scheduleList = scheduleList.filter((schedule) => schedule.id !== id);
+        renderSchedule();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #resultMessage {
+            margin-top: 20px;
+            font-size: 18px;
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Patient Details</h1>
+
+        <!-- Search box to filter the table by symptoms -->
+        <p><b><em>ENTER YOUR SYMPTOMS ONLY</em></b></p><input type="text" id="searchInput" placeholder="Search by symptoms..." onkeyup="filterTable()">
+
+        <table id="patientTable">
+            <thead>
+                <tr>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Symptoms</th>
+                    <th>Issue</th>
+                    <th>Solution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>45</td>
+                    <td>Male</td>
+                    <td>Fever, Cough</td>
+                    <td>Flu</td>
+                    <td>Rest, Fluids, and Over-the-Counter Medication</td>
+                </tr>
+                <tr>
+                    <td>32</td>
+                    <td>Female</td>
+                    <td>Headache, Dizziness</td>
+                    <td>Migraine</td>
+                    <td>Prescribed Pain Relievers, Lifestyle Changes</td>
+                </tr>
+                <tr>
+                    <td>60</td>
+                    <td>Male</td>
+                    <td>Chest Pain, Shortness of Breath</td>
+                    <td>Angina</td>
+                    <td>Medication, Lifestyle Modifications</td>
+                </tr>
+                <tr>
+                    <td>29</td>
+                    <td>Female</td>
+                    <td>Abdominal Pain, Nausea</td>
+                    <td>Gastritis</td>
+                    <td>Antacids, Dietary Adjustments</td>
+                </tr>
+                <tr>
+                    <td>55</td>
+                    <td>Male</td>
+                    <td>Joint Pain, Swelling</td>
+                    <td>Arthritis</td>
+                    <td>Pain Management, Physical Therapy</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>Female</td>
+                    <td>Skin Rash, Itching</td>
+                    <td>Allergic Reaction</td>
+                    <td>Antihistamines, Topical Creams</td>
+                </tr>
+                <tr>
+                    <td>70</td>
+                    <td>Male</td>
+                    <td>Memory Loss, Confusion</td>
+                    <td>Dementia</td>
+                    <td>Cognitive Therapy, Medication</td>
+                </tr>
+                <tr>
+                    <td>52</td>
+                    <td>Female</td>
+                    <td>Shortness of Breath, Cough</td>
+                    <td>Pneumonia</td>
+                    <td>Antibiotics, Rest, Fluids</td>
+                </tr>
+                <tr>
+                    <td>38</td>
+                    <td>Male</td>
+                    <td>Fatigue, Weight Loss</td>
+                    <td>Diabetes</td>
+                    <td>Insulin Therapy, Diet Control</td>
+                </tr>
+                <tr>
+                    <td>47</td>
+                    <td>Female</td>
+                    <td>Back Pain, Stiffness</td>
+                    <td>Herniated Disc</td>
+                    <td>Physical Therapy, Pain Management</td>
+                </tr>
+                <tr>
+                    <td>30</td>
+                    <td>Male</td>
+                    <td>Throat Pain, Hoarse Voice</td>
+                    <td>Laryngitis</td>
+                    <td>Rest, Fluids, Avoid Irritants</td>
+                </tr>
+                <tr>
+                    <td>63</td>
+                    <td>Male</td>
+                    <td>Fatigue, Palpitations</td>
+                    <td>Atrial Fibrillation</td>
+                    <td>Blood Thinners, Heart Rate Control Medication</td>
+                </tr>
+                <tr>
+                    <td>28</td>
+                    <td>Female</td>
+                    <td>Anxiety, Panic Attacks</td>
+                    <td>Anxiety Disorder</td>
+                    <td>Cognitive Behavioral Therapy, Medication</td>
+                </tr>
+                <tr>
+                    <td>40</td>
+                    <td>Male</td>
+                    <td>Stomach Cramps, Diarrhea</td>
+                    <td>Food Poisoning</td>
+                    <td>Hydration, Antibiotics (if necessary)</td>
+                </tr>
+                <tr>
+                    <td>65</td>
+                    <td>Female</td>
+                    <td>Swollen Feet, Fatigue</td>
+                    <td>Congestive Heart Failure</td>
+                    <td>Diuretics, Blood Pressure Medication</td>
+                </tr>
+                <tr>
+                    <td>54</td>
+                    <td>Female</td>
+                    <td>Hot Flashes, Night Sweats</td>
+                    <td>Menopause</td>
+                    <td>Hormone Replacement Therapy, Lifestyle Adjustments</td>
+                </tr>
+                <tr>
+                    <td>36</td>
+                    <td>Male</td>
+                    <td>Knee Pain, Swelling</td>
+                    <td>Knee Injury</td>
+                    <td>Physical Therapy, Pain Management</td>
+                </tr>
+                <tr>
+                    <td>48</td>
+                    <td>Female</td>
+                    <td>Frequent Urination, Thirst</td>
+                    <td>Type 2 Diabetes</td>
+                    <td>Diet, Exercise, Medication</td>
+                </tr>
+                <tr>
+                    <td>75</td>
+                    <td>Male</td>
+                    <td>Difficulty Breathing, Fatigue</td>
+                    <td>Chronic Obstructive Pulmonary Disease (COPD)</td>
+                    <td>Bronchodilators, Oxygen Therapy</td>
+                </tr>
+                <tr>
+                    <td>27</td>
+                    <td>Female</td>
+                    <td>Fatigue, Sore Throat</td>
+                    <td>Mononucleosis</td>
+                    <td>Rest, Fluids, Pain Relievers</td>
+                </tr>
+                <tr>
+                    <td>35</td>
+                    <td>Male</td>
+                    <td>Nausea, Vomiting</td>
+                    <td>Gastroenteritis</td>
+                    <td>Hydration, Antiemetics</td>
+                </tr>
+                <tr>
+                    <td>50</td>
+                    <td>Female</td>
+                    <td>Blurred Vision, Dizziness</td>
+                    <td>Hypertension</td>
+                    <td>Blood Pressure Medication, Diet Adjustments</td>
+                </tr>
+                <tr>
+                    <td>66</td>
+                    <td>Male</td>
+                    <td>Frequent Urination, Back Pain</td>
+                    <td>Kidney Stones</td>
+                    <td>Hydration, Pain Relief, Possible Surgery</td>
+                </tr>
+                <tr>
+                    <td>41</td>
+                    <td>Female</td>
+                    <td>Weight Gain, Fatigue</td>
+                    <td>Hypothyroidism</td>
+                    <td>Thyroid Hormone Replacement</td>
+                </tr>
+                <tr>
+                    <td>58</td>
+                    <td>Male</td>
+                    <td>Abdominal Pain, Blood in Stool</td>
+                    <td>Colorectal Cancer</td>
+                    <td>Surgery, Chemotherapy, Radiation</td>
+                </tr>
+                <tr>
+                    <td>22</td>
+                    <td>Female</td>
+                    <td>Dizziness, Weakness</td>
+                    <td>Anemia</td>
+                    <td>Iron Supplements, Diet Changes</td>
+                </tr>
+                <tr>
+                    <td>48</td>
+                    <td>Male</td>
+                    <td>Back Pain, Numbness</td>
+                    <td>Spinal Stenosis</td>
+                    <td>Physical Therapy, Pain Management</td>
+                </tr>
+                <tr>
+                    <td>57</td>
+                    <td>Female</td>
+                    <td>Frequent Headaches, Light Sensitivity</td>
+                    <td>Cluster Headaches</td>
+                    <td>Pain Management, Oxygen Therapy</td>
+                </tr>
+                <tr>
+                    <td>39</td>
+                    <td>Male</td>
+                    <td>Cough, Difficulty Breathing</td>
+                    <td>Asthma</td>
+                    <td>Inhalers, Bronchodilators</td>
+                </tr>
+                <tr>
+                    <td>33</td>
+                    <td>Female</td>
+                    <td>Muscle Weakness, Fatigue</td>
+                    <td>Multiple Sclerosis</td>
+                    <td>Medication, Physical Therapy</td>
+                </tr>
+                <tr>
+                    <td>62</td>
+                    <td>Male</td>
+                    <td>Hand Tremors, Balance Issues</td>
+                    <td>Parkinson's Disease</td>
+                    <td>Medication, Physical Therapy</td>
+                </tr>
+                <tr>
+                    <td>47</td>
+                    <td>Female</td>
+                    <td>Chest Tightness, Fatigue</td>
+                    <td>Heart Failure</td>
+                    <td>Medication, Surgery</td>
+                </tr>
+                <tr>
+                    <td>38</td>
+                    <td>Male</td>
+                    <td>Vision Loss, Eye Pain</td>
+                    <td>Glaucoma</td>
+                    <td>Medication, Surgery</td>
+                </tr>
+                <tr>
+                    <td>53</td>
+                    <td>Female</td>
+                    <td>Nausea, Heartburn</td>
+                    <td>Acid Reflux</td>
+                    <td>Antacids, Diet Adjustments</td>
+                </tr>
+                <tr>
+                    <td>70</td>
+                    <td>Male</td>
+                    <td>Fatigue, Loss of Appetite</td>
+                    <td>Kidney Failure</td>
+                    <td>Dialysis, Transplant</td>
+                </tr>
+                <tr>
+                    <td>42</td>
+                    <td>Female</td>x
+                    <td>Weight Loss, Jaundice</td>
+                    <td>Liver Disease</td>
+                    <td>Lifestyle Changes, Medication</td>
+                </tr>
+                
+
+
+                        <tr>
+                            <td>45</td>
+                            <td>Male</td>
+                            <td>Fever, Cough</td>
+                            <td>Flu</td>
+                            <td>Rest, Fluids, and Over-the-Counter Medication</td>
+                        </tr>
+                        <tr>
+                            <td>32</td>
+                            <td>Female</td>
+                            <td>Headache, Dizziness</td>
+                            <td>Migraine</td>
+                            <td>Prescribed Pain Relievers, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>60</td>
+                            <td>Male</td>
+                            <td>Chest Pain, Shortness of Breath</td>
+                            <td>Angina</td>
+                            <td>Medication, Lifestyle Modifications</td>
+                        </tr>
+                        <tr>
+                            <td>29</td>
+                            <td>Female</td>
+                            <td>Abdominal Pain, Nausea</td>
+                            <td>Gastritis</td>
+                            <td>Antacids, Dietary Adjustments</td>
+                        </tr>
+                        <tr>
+                            <td>55</td>
+                            <td>Male</td>
+                            <td>Joint Pain, Swelling</td>
+                            <td>Arthritis</td>
+                            <td>Pain Management, Physical Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>48</td>
+                            <td>Female</td>
+                            <td>Fatigue, Weight Gain</td>
+                            <td>Hypothyroidism</td>
+                            <td>Thyroid Hormone Replacement Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>52</td>
+                            <td>Male</td>
+                            <td>Frequent Urination, Increased Thirst</td>
+                            <td>Diabetes</td>
+                            <td>Insulin Therapy, Dietary Management</td>
+                        </tr>
+                        <tr>
+                            <td>46</td>
+                            <td>Female</td>
+                            <td>Hot Flashes, Mood Swings</td>
+                            <td>Menopause</td>
+                            <td>Hormone Replacement Therapy, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>50</td>
+                            <td>Male</td>
+                            <td>Difficulty Sleeping, Anxiety</td>
+                            <td>Insomnia</td>
+                            <td>Cognitive Behavioral Therapy, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>58</td>
+                            <td>Female</td>
+                            <td>Shortness of Breath, Fatigue</td>
+                            <td>Chronic Obstructive Pulmonary Disease (COPD)</td>
+                            <td>Bronchodilators, Pulmonary Rehabilitation</td>
+                        </tr>
+                        <tr>
+                            <td>53</td>
+                            <td>Male</td>
+                            <td>Heartburn, Regurgitation</td>
+                            <td>Gastroesophageal Reflux Disease (GERD)</td>
+                            <td>Antacids, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>49</td>
+                            <td>Female</td>
+                            <td>Swollen Legs, Fatigue</td>
+                            <td>Heart Failure</td>
+                            <td>Diuretics, Lifestyle Adjustments</td>
+                        </tr>
+                        <tr>
+                            <td>42</td>
+                            <td>Male</td>
+                            <td>Memory Loss, Confusion</td>
+                            <td>Dementia</td>
+                            <td>Medications, Cognitive Training</td>
+                        </tr>
+                        <tr>
+                            <td>39</td>
+                            <td>Female</td>
+                            <td>Skin Rash, Itching</td>
+                            <td>Psoriasis</td>
+                            <td>Topical Treatments, Light Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>57</td>
+                            <td>Male</td>
+                            <td>Persistent Cough, Wheezing</td>
+                            <td>Asthma</td>
+                            <td>Inhalers, Avoiding Triggers</td>
+                        </tr>
+                        <tr>
+                            <td>61</td>
+                            <td>Female</td>
+                            <td>Severe Headaches, Sensitivity to Light</td>
+                            <td>Tension Headache</td>
+                            <td>Relaxation Techniques, Pain Relievers</td>
+                        </tr>
+                        <tr>
+                            <td>41</td>
+                            <td>Male</td>
+                            <td>Stomach Bloating, Diarrhea</td>
+                            <td>Irritable Bowel Syndrome (IBS)</td>
+                            <td>Dietary Changes, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>44</td>
+                            <td>Female</td>
+                            <td>Joint Stiffness, Swelling</td>
+                            <td>Rheumatoid Arthritis</td>
+                            <td>Anti-inflammatory Medications, Physical Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>47</td>
+                            <td>Male</td>
+                            <td>Chest Tightness, Fatigue</td>
+                            <td>Coronary Artery Disease</td>
+                            <td>Medications, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>54</td>
+                            <td>Female</td>
+                            <td>Vision Changes, Headaches</td>
+                            <td>Cataracts</td>
+                            <td>Surgery, Lifestyle Modifications</td>
+                        </tr>
+                        <tr>
+                            <td>65</td>
+                            <td>Female</td>
+                            <td>Memory Loss, Confusion</td>
+                            <td>Alzheimer's Disease</td>
+                            <td>Cognitive Therapy, Medications</td>
+                        </tr>
+                        <tr>
+                            <td>59</td>
+                            <td>Male</td>
+                            <td>Severe Back Pain, Numbness</td>
+                            <td>Herniated Disc</td>
+                            <td>Physical Therapy, Pain Management</td>
+                        </tr>
+                        <tr>
+                            <td>50</td>
+                            <td>Female</td>
+                            <td>Chronic Fatigue, Muscle Pain</td>
+                            <td>Fibromyalgia</td>
+                            <td>Medication, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>61</td>
+                            <td>Male</td>
+                            <td>Frequent Headaches, Vision Changes</td>
+                            <td>Glaucoma</td>
+                            <td>Medication, Regular Eye Exams</td>
+                        </tr>
+                        <tr>
+                            <td>62</td>
+                            <td>Female</td>
+                            <td>Nausea, Weight Loss</td>
+                            <td>Gastric Ulcer</td>
+                            <td>Proton Pump Inhibitors, Dietary Modifications</td>
+                        </tr>
+                        <tr>
+                            <td>45</td>
+                            <td>Male</td>
+                            <td>Chest Discomfort, Heart Palpitations</td>
+                            <td>Arrhythmia</td>
+                            <td>Medication, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>56</td>
+                            <td>Female</td>
+                            <td>Joint Pain, Fatigue</td>
+                            <td>Lupus</td>
+                            <td>Immunosuppressants, Physical Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>54</td>
+                            <td>Male</td>
+                            <td>Dry Skin, Hair Loss</td>
+                            <td>Hypoparathyroidism</td>
+                            <td>Calcium and Vitamin D Supplements</td>
+                        </tr>
+                        <tr>
+                            <td>49</td>
+                            <td>Female</td>
+                            <td>Cold Intolerance, Fatigue</td>
+                            <td>Hashimoto's Thyroiditis</td>
+                            <td>Thyroid Hormone Replacement Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>57</td>
+                            <td>Male</td>
+                            <td>Skin Lesions, Itching</td>
+                            <td>Melanoma</td>
+                            <td>Dermatological Treatments, Surgery</td>
+                        </tr>
+                        <tr>
+                            <td>44</td>
+                            <td>Female</td>
+                            <td>Persistent Cough, Wheezing</td>
+                            <td>Bronchitis</td>
+                            <td>Bronchodilators, Steroids</td>
+                        </tr>
+                        <tr>
+                            <td>52</td>
+                            <td>Male</td>
+                            <td>Foot Pain, Swelling</td>
+                            <td>Gout</td>
+                            <td>Medications, Dietary Changes</td>
+                        </tr>
+                        <tr>
+                            <td>39</td>
+                            <td>Female</td>
+                            <td>Abdominal Pain, Constipation</td>
+                            <td>Diverticulitis</td>
+                            <td>High-Fiber Diet, Antibiotics</td>
+                        </tr>
+                        <tr>
+                            <td>55</td>
+                            <td>Male</td>
+                            <td>High Blood Pressure, Headaches</td>
+                            <td>Hypertension</td>
+                            <td>Medications, Lifestyle Modifications</td>
+                        </tr>
+                        <tr>
+                            <td>46</td>
+                            <td>Female</td>
+                            <td>Muscle Weakness, Numbness</td>
+                            <td>Multiple Sclerosis</td>
+                            <td>Medications, Physical Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>43</td>
+                            <td>Male</td>
+                            <td>Sudden Weight Loss, Increased Appetite</td>
+                            <td>Hyperthyroidism</td>
+                            <td>Antithyroid Medications, Radioactive Iodine</td>
+                        </tr>
+                        <tr>
+                            <td>58</td>
+                            <td>Female</td>
+                            <td>Severe Fatigue, Sore Throat</td>
+                            <td>Chronic Fatigue Syndrome</td>
+                            <td>Symptom Management, Lifestyle Adjustments</td>
+                        </tr>
+                        <tr>
+                            <td>41</td>
+                            <td>Male</td>
+                            <td>Difficulty Swallowing, Heartburn</td>
+                            <td>Esophageal Stricture</td>
+                            <td>Endoscopic Dilation, Medications</td>
+                        </tr>
+                        <tr>
+                            <td>48</td>
+                            <td>Female</td>
+                            <td>Joint Stiffness, Fatigue</td>
+                            <td>Osteoarthritis</td>
+                            <td>Physical Therapy, Pain Relievers</td>
+                        </tr>
+                        <tr>
+                            <td>45</td>
+                            <td>Male</td>
+                            <td>Night Sweats, Weight Loss</td>
+                            <td>Lymphoma</td>
+                            <td>Chemotherapy, Radiation Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>54</td>
+                            <td>Female</td>
+                            <td>Chronic Cough, Fatigue</td>
+                            <td>Pneumonia</td>
+                            <td>Antibiotics, Rest, Hydration</td>
+                        </tr>
+                        <tr>
+                            <td>56</td>
+                            <td>Male</td>
+                            <td>Joint Pain, Morning Stiffness</td>
+                            <td>Fibromyalgia</td>
+                            <td>Exercise, Medications</td>
+                        </tr>
+                        <tr>
+                            <td>49</td>
+                            <td>Female</td>
+                            <td>Swelling, Shortness of Breath</td>
+                            <td>Congestive Heart Failure</td>
+                            <td>Diuretics, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>55</td>
+                            <td>Male</td>
+                            <td>Rapid Heartbeat, Fatigue</td>
+                            <td>Supraventricular Tachycardia</td>
+                            <td>Medication, Lifestyle Modifications</td>
+                        </tr>
+                        <tr>
+                            <td>40</td>
+                            <td>Female</td>
+                            <td>Stomach Pain, Diarrhea</td>
+                            <td>Inflammatory Bowel Disease (IBD)</td>
+                            <td>Anti-inflammatory Medications, Dietary Adjustments</td>
+                        </tr>
+                        <tr>
+                            <td>64</td>
+                            <td>Male</td>
+                            <td>Depression, Anxiety</td>
+                            <td>Major Depressive Disorder</td>
+                            <td>Therapy, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>51</td>
+                            <td>Female</td>
+                            <td>Increased Thirst, Frequent Urination</td>
+                            <td>Type 2 Diabetes</td>
+                            <td>Blood Sugar Management, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>45</td>
+                            <td>Male</td>
+                            <td>Persistent Fatigue, Night Sweats</td>
+                            <td>Chronic Lymphocytic Leukemia</td>
+                            <td>Chemotherapy, Targeted Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>62</td>
+                            <td>Female</td>
+                            <td>Vision Loss, Eye Pain</td>
+                            <td>Macular Degeneration</td>
+                            <td>Medications, Vision Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>50</td>
+                            <td>Male</td>
+                            <td>Severe Anxiety, Panic Attacks</td>
+                            <td>Panic Disorder</td>
+                            <td>Cognitive Behavioral Therapy, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>28</td>
+                            <td>Female</td>
+                            <td>Persistent Cough, Fatigue</td>
+                            <td>Chronic Obstructive Pulmonary Disease (COPD)</td>
+                            <td>Inhalers, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>36</td>
+                            <td>Male</td>
+                            <td>Joint Pain, Stiffness</td>
+                            <td>Rheumatoid Arthritis</td>
+                            <td>DMARDs, Physical Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>43</td>
+                            <td>Female</td>
+                            <td>Chest Pain, Shortness of Breath</td>
+                            <td>Pulmonary Embolism</td>
+                            <td>Anticoagulants, Oxygen Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>37</td>
+                            <td>Male</td>
+                            <td>Insomnia, Weight Gain</td>
+                            <td>Hypothyroidism</td>
+                            <td>Thyroid Hormone Replacement</td>
+                        </tr>
+                        <tr>
+                            <td>45</td>
+                            <td>Female</td>
+                            <td>Severe Headaches, Nausea</td>
+                            <td>Migraine</td>
+                            <td>Prescription Medications, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>61</td>
+                            <td>Male</td>
+                            <td>Memory Loss, Mood Changes</td>
+                            <td>Dementia</td>
+                            <td>Cognitive Therapy, Medications</td>
+                        </tr>
+                        <tr>
+                            <td>29</td>
+                            <td>Female</td>
+                            <td>Fatigue, Joint Pain</td>
+                            <td>Chronic Fatigue Syndrome</td>
+                            <td>Symptom Management, Lifestyle Adjustments</td>
+                        </tr>
+                        <tr>
+                            <td>53</td>
+                            <td>Male</td>
+                            <td>Frequent Urination, Blurry Vision</td>
+                            <td>Diabetes Mellitus</td>
+                            <td>Insulin Therapy, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>65</td>
+                            <td>Female</td>
+                            <td>Difficulty Breathing, Coughing</td>
+                            <td>Heart Failure</td>
+                            <td>Diuretics, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>42</td>
+                            <td>Male</td>
+                            <td>Severe Abdominal Pain, Diarrhea</td>
+                            <td>Ulcerative Colitis</td>
+                            <td>Corticosteroids, Immunosuppressants</td>
+                        </tr>
+                        <tr>
+                            <td>39</td>
+                            <td>Female</td>
+                            <td>High Fever, Rash</td>
+                            <td>Chickenpox</td>
+                            <td>Antihistamines, Rest</td>
+                        </tr>
+                        <tr>
+                            <td>55</td>
+                            <td>Male</td>
+                            <td>Chest Tightness, Coughing</td>
+                            <td>Asthma</td>
+                            <td>Inhalers, Avoiding Triggers</td>
+                        </tr>
+                        <tr>
+                            <td>70</td>
+                            <td>Female</td>
+                            <td>Severe Pain, Swelling in Joints</td>
+                            <td>Osteoarthritis</td>
+                            <td>Pain Relievers, Physical Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>48</td>
+                            <td>Male</td>
+                            <td>Weight Loss, Severe Thirst</td>
+                            <td>Type 1 Diabetes</td>
+                            <td>Insulin Therapy, Dietary Changes</td>
+                        </tr>
+                        <tr>
+                            <td>34</td>
+                            <td>Female</td>
+                            <td>Nausea, Stomach Pain</td>
+                            <td>Gastritis</td>
+                            <td>Antacids, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>52</td>
+                            <td>Male</td>
+                            <td>Fatigue, Frequent Infections</td>
+                            <td>Chronic Kidney Disease</td>
+                            <td>Dialysis, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>41</td>
+                            <td>Female</td>
+                            <td>Abdominal Bloating, Heartburn</td>
+                            <td>Irritable Bowel Syndrome (IBS)</td>
+                            <td>Dietary Changes, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>57</td>
+                            <td>Male</td>
+                            <td>Severe Anxiety, Depression</td>
+                            <td>Generalized Anxiety Disorder</td>
+                            <td>Cognitive Behavioral Therapy, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>66</td>
+                            <td>Female</td>
+                            <td>Skin Rash, Fever</td>
+                            <td>Shingles</td>
+                            <td>Antiviral Medications, Pain Relief</td>
+                        </tr>
+                        <tr>
+                            <td>60</td>
+                            <td>Male</td>
+                            <td>Shortness of Breath, Fatigue</td>
+                            <td>Chronic Bronchitis</td>
+                            <td>Inhalers, Lifestyle Modifications</td>
+                        </tr>
+                        <tr>
+                            <td>30</td>
+                            <td>Female</td>
+                            <td>Joint Pain, Fatigue</td>
+                            <td>Lupus</td>
+                            <td>Immunosuppressants, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>58</td>
+                            <td>Male</td>
+                            <td>Dry Eyes, Vision Changes</td>
+                            <td>Diabetic Retinopathy</td>
+                            <td>Laser Treatment, Regular Eye Exams</td>
+                        </tr>
+                        <tr>
+                            <td>46</td>
+                            <td>Female</td>
+                            <td>Severe Nausea, Abdominal Pain</td>
+                            <td>Appendicitis</td>
+                            <td>Surgery, Antibiotics</td>
+                        </tr>
+                        <tr>
+                            <td>63</td>
+                            <td>Male</td>
+                            <td>Excessive Thirst, Frequent Urination</td>
+                            <td>Diabetes Insipidus</td>
+                            <td>Desmopressin, Medication</td>
+                        </tr>
+                        <tr>
+                            <td>38</td>
+                            <td>Female</td>
+                            <td>Persistent Cough, Wheezing</td>
+                            <td>Asthma</td>
+                            <td>Inhalers, Avoiding Allergens</td>
+                        </tr>
+                        <tr>
+                            <td>74</td>
+                            <td>Male</td>
+                            <td>Chest Pain, Nausea</td>
+                            <td>Heart Attack</td>
+                            <td>Emergency Treatment, Lifestyle Changes</td>
+                        </tr>
+                        <tr>
+                            <td>40</td>
+                            <td>Female</td>
+                            <td>Severe Cramping, Bloating</td>
+                            <td>Endometriosis</td>
+                            <td>Pain Management, Hormonal Therapy</td>
+                        </tr>
+                        <tr>
+                            <td>44</td>
+                            <td>Male</td>
+                            <td>Weight Loss, Increased Appetite</td>
+                            <td>Hyperthyroidism</td>
+                            <td>Antithyroid Medications, Radioactive Iodine</td>
+                        </tr>
+                        
+                    
+                
+        </table>
+
+        <p id="resultMessage">No matching records found.</p>
+
+    </div>
+
+    <script>
+        // JavaScript function to filter table rows based on search input
+        function filterTable() {
+            // Get the search input
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            
+            // Get table and rows
+            let table = document.getElementById('patientTable');
+            let tr = table.getElementsByTagName('tr');
+            
+            // Initialize variable to track matches
+            let hasMatches = false;
+            
+            // Loop through all table rows (except the first one which is the header)
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName('td')[2]; // Column for Symptoms
+                if (td) {
+                    let textValue = td.textContent || td.innerText;
+                    if (textValue.toLowerCase().indexOf(input) > -1) {
+                        tr[i].style.display = ''; // Show the row if match is found
+                        hasMatches = true;
+                    } else {
+                        tr[i].style.display = 'none'; // Hide the row if no match is found
+                    }
+                }
+            }
+            
+            // Show "No matching records found" message if no matches
+            document.getElementById('resultMessage').style.display = hasMatches ? 'none' : 'block';
+        }
+    </script>
+
+</body>
+</html>

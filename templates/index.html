@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Home - MARS Healthcare Ecosystem{% endblock %}
+{% block content %}
+<div class="space-y-16"> 
+  <div
+    class="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-20 rounded-lg shadow-xl"
+  >
+    <div class="container mx-auto text-center">
+      <h1 class="text-5xl font-bold mb-6 animate-pulse">
+        Welcome to MARS Healthcare Ecosystem
+      </h1>
+      <p class="text-xl mb-8">
+        Your comprehensive solution for personalized healthcare management
+      </p>
+    </div>
+  </div>
+
+  <div
+    class="section symptom-checker bg-white dark:bg-gray-800 shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 mt-8 mx-auto w-full max-w-3xl transition-transform duration-300 transform hover:scale-105"
+  >
+    <h2
+      class="text-3xl font-bold mb-4 text-center text-blue-600 dark:text-blue-400"
+    >
+      Enter your Symptoms here:
+    </h2>
+    <form
+      action="{{ url_for('analyze_symptoms') }}"
+      method="POST"
+      enctype="multipart/form-data"
+      id="symptomForm"
+    >
+      <div class="mb-4">
+        <label for="symptoms" class="block mb-2 text-gray-700 dark:text-gray-200">Describe your symptoms:</label>
+        <div class="flex">
+          <textarea
+            id="symptoms"
+            name="symptoms"
+            rows="6"
+            class="w-3/4 px-4 py-3 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline transition-shadow duration-300"
+            required
+          ></textarea>
+          <textarea
+            id="results"
+            rows="6"
+            class="w-1/4 px-4 py-3 text-gray-700 border rounded-lg focus:outline-none ml-4 transition-shadow duration-300"
+            readonly
+            placeholder="Potential Health Conditions will appear here..."
+          ></textarea>
+        </div>
+      </div>
+      <div class="flex items-center justify-center">
+        <button
+          type="submit"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition-transform duration-300 transform hover:scale-105 shadow-md"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("symptomForm").addEventListener("submit", function (e) {
+      e.preventDefault(); 
+
+      const symptoms = document.getElementById("symptoms").value.toLowerCase();
+      const resultsTextarea = document.getElementById("results");
+      const potentialConditions = [];
+
+      const healthConditions = {
+        fever: ["Common Cold", "Flu", "COVID-19", "Sinus Infection", "Pneumonia"],
+        headache: ["Migraine", "Tension Headaches", "Cluster Headaches", "Sinus Headaches", "Dehydration"],
+        cough: ["Bronchitis", "Asthma", "Pneumonia", "COVID-19", "Allergies"],
+        
+        abdominal: ["Gastritis", "Irritable Bowel Syndrome (IBS)", "Appendicitis", "Gallstones", "Stomach Ulcer"],
+        fatigue: ["Anemia", "Thyroid Disorders", "Chronic Fatigue Syndrome", "Diabetes", "Fibromyalgia", "Heart Failure", "Depression", "Sleep Apnea", "Liver Disease", "Adrenal Insufficiency"],
+        chest_pain: ["Heart Attack", "Angina", "Pericarditis", "Aortic Dissection", "Pulmonary Embolism", "Costochondritis", "Pneumothorax", "Gastroesophageal Reflux Disease (GERD)", "Peptic Ulcer", "Pleurisy"],
+        joint_pain: ["Osteoarthritis", "Rheumatoid Arthritis", "Lupus", "Gout", "Lyme Disease", "Tendinitis", "Bursitis", "Fibromyalgia", "Psoriatic Arthritis", "Ankylosing Spondylitis"],
+        dizziness: ["Vertigo", "Meniere's Disease", "Anemia", "Dehydration", "Hypoglycemia", "Postural Hypotension", "Labyrinthitis", "Brain Tumor", "Multiple Sclerosis", "Inner Ear Infection"],
+        rashes: ["Eczema", "Psoriasis", "Contact Dermatitis", "Shingles", "Chickenpox", "Scabies", "Lupus", "Rosacea", "Ringworm", "Hives"],
+        shortness_of_breath: ["Asthma", "Chronic Obstructive Pulmonary Disease (COPD)", "Pulmonary Embolism", "Heart Failure", "Pneumonia", "Panic Attack", "Pneumothorax", "Anemia", "Allergic Reaction", "Bronchiectasis"],
+        vision_problems: ["Cataracts", "Glaucoma", "Macular Degeneration", "Diabetic Retinopathy", "Retinal Detachment", "Optic Neuritis", "Conjunctivitis", "Corneal Abrasion", "Strabismus", "Amblyopia"],
+        weight_loss: ["Hyperthyroidism", "Diabetes", "Cancer", "Celiac Disease", "Crohn's Disease", "HIV/AIDS", "Tuberculosis", "Addison's Disease", "Congestive Heart Failure", "Chronic Kidney Disease"],
+        nausea: ["Gastroenteritis", "Food Poisoning", "Motion Sickness", "Pregnancy", "Peptic Ulcer", "Gastroparesis", "Hepatitis", "Pancreatitis", "Liver Disease", "Hyperemesis Gravidarum"],
+        diarrhea: ["Irritable Bowel Syndrome (IBS)", "Crohn's Disease", "Ulcerative Colitis", "Food Poisoning", "Celiac Disease", "Gastroenteritis", "Hyperthyroidism", "Lactose Intolerance", "Giardiasis", "Clostridioides difficile Infection"],
+        sore_throat: ["Strep Throat", "Tonsillitis", "Pharyngitis", "Mononucleosis", "Laryngitis", "Croup", "Oral Thrush", "Viral Upper Respiratory Infection", "Gonorrhea", "HIV"],
+        back_pain: ["Sciatica", "Herniated Disc", "Scoliosis", "Ankylosing Spondylitis", "Osteoarthritis", "Muscle Strain", "Spinal Stenosis", "Kidney Stones", "Fibromyalgia", "Osteoporosis"],
+        skin_problems: ["Acne", "Warts", "Melanoma", "Basal Cell Carcinoma", "Squamous Cell Carcinoma", "Epidermoid Cyst", "Lipoma", "Erysipelas", "Vitiligo", "Fungal Infections"],
+        mental_health: ["Depression", "Anxiety Disorders", "Bipolar Disorder", "Schizophrenia", "Obsessive-Compulsive Disorder (OCD)", "Post-Traumatic Stress Disorder (PTSD)", "Attention-Deficit Hyperactivity Disorder (ADHD)", "Borderline Personality Disorder", "Eating Disorders", "Substance Abuse Disorder"],
+        pediatric_conditions: ["Hand, Foot, and Mouth Disease", "Kawasaki Disease", "Respiratory Syncytial Virus (RSV)", "Croup", "Measles", "Mumps", "Rubella", "Scarlet Fever", "Chickenpox", "Fifth Disease"],
+        geriatric_conditions: ["Alzheimer's Disease", "Parkinson's Disease", "Osteoporosis", "Macular Degeneration", "Glaucoma", "Arthritis", "Heart Failure", "Chronic Kidney Disease", "Prostate Enlargement", "Falls and Fractures"],
+
+        hot_flashes: ["Menopause", "Hormonal Imbalance", "Thyroid Disorders", "Stress", "Hyperhidrosis", "Certain Medications"],
+        irregular_periods: ["Polycystic Ovary Syndrome (PCOS)", "Thyroid Disorders", "Endometriosis", "Stress", "Pregnancy", "Menopause"],
+        breast_tenderness: ["Hormonal Changes", "Pregnancy", "Fibrocystic Breast Changes", "Mastitis", "Breast Cancer", "PMS"],
+        urinary_frequency: ["Urinary Tract Infection", "Diabetes", "Overactive Bladder", "Interstitial Cystitis", "Prostate Issues", "Pregnancy"],
+        pelvic_pain: ["Endometriosis", "Pelvic Inflammatory Disease (PID)", "Ovarian Cysts", "Uterine Fibroids", "Ectopic Pregnancy", "Irritable Bowel Syndrome (IBS)"],
+        sleep_disturbances: ["Insomnia", "Sleep Apnea", "Restless Legs Syndrome", "Anxiety", "Depression", "Chronic Pain"],
+        changes_in_appetite: ["Depression", "Anxiety", "Hyperthyroidism", "Diabetes", "Pregnancy", "Eating Disorders"],
+        hair_loss: ["Alopecia Areata", "Thyroid Disorders", "Hormonal Changes", "Iron Deficiency Anemia", "Stress", "Certain Medications"],
+        joint_stiffness: ["Osteoarthritis", "Rheumatoid Arthritis", "Fibromyalgia", "Lupus", "Gout", "Ankylosing Spondylitis"],
+        digestive_problems: ["Irritable Bowel Syndrome (IBS)", "Crohn's Disease", "Ulcerative Colitis", "Celiac Disease", "Gastroesophageal Reflux Disease (GERD)"]
+      };
+
+      for (let condition in healthConditions) {
+        if (symptoms.includes(condition)) {
+          potentialConditions.push(...healthConditions[condition]);
+        }
+      }
+
+      resultsTextarea.value = potentialConditions.length > 0 ? potentialConditions.join(", ") : "No potential conditions found.";
+    });
+  </script>
+</div>
+{% endblock %}
